@@ -551,3 +551,31 @@ class ModelSkeleton(object):
             tf.summary.scalar(layer_name+'/max', tf.reduce_mean(x))
             tf.summary.scalar(layer_name+'/min', tf.reduce_mean(x))
 
+    def _add_output_graph(self):
+        """define how to intepret output"""
+        mc = self.mc
+        with tf.variable_scope('interpret_output') as scope:
+            self.prob = tf.multiply(
+                tf.nn.softmax(self.output_prob, dim=-1), self.lidar_mask,
+                name='pred_prob'
+            )
+            self.pred_cls = tf.argmax(self.prob, axis=3, name='pred_cls')
+
+            #add summaries
+            for cls_id, cls in enumerate(mc.CLASSES):
+                self._activation_summary(self.prob[:, :, :, cls_id], 'prob_'+cls)
+
+
+    def _add_loss_graph(self):
+        """Define the loss operation"""
+        mc = self.mc
+
+        with tf.variable_scope('cls_loss') as scope:
+            self.cls_loss = tf.identity(
+                tf.reduce_sum(
+                    tf.nn.sparse_softmax_cross_entropy_with_logits(
+                        lables=tf.resape(self.lable,)
+                    )
+                )
+            )
+

@@ -13,8 +13,9 @@ class kitti(imbd):
         self._lidar_2d_path = os.path.join(self._data_root_path, 'lidar_2d')
         self._gtd_2d_path = os.path.join(self._data_root_path, 'gta')
 
-        #a list of string indices of images in the directory
+        # a list of string indices of images in the directory
         self._image_idx = self._load_image_set_idx()
+
 
     def _load_image_set_idx(self):
         image_set_file = os.path.join(
@@ -22,5 +23,17 @@ class kitti(imbd):
         assert os.path.exists(image_set_file), \
             'File does not exist: {}'.format(image_set_file)
 
-        with open (image_set_file) as f:
-            image_idx 
+        with open(image_set_file) as f:
+            image_idx = [x.strip() for x in f.readlines()]
+        return image_idx
+
+    def _lidar_2d_path_at(self, idx):
+        if idx[:4] == 'gta_':
+            lidar_2d_path = os.path.join(self._gta_2d_path, idx+'.npy')
+        else:
+            lidar_2d_path = os.path.join(self._lidar_2d_path, idx+'.npy')
+
+        assert os.path.exists(lidar_2d_path), \
+            'File dose not exist: {}'.format(lidar_2d_path)
+        return lidar_2d_path
+

@@ -97,7 +97,7 @@ class imbd(object):
             label = record[:, :, 5]
             weight = np.zeros(label.shape)
             for l in range(mc.NUM_CLASS):
-                weight[label==l] = mc.CLS_LOSS_WEIGHT[int(l)] ##todo wieso gibt es hier ein los weight
+                weight[label==l] = mc.CLS_LOSS_WEIGHT[int(l)] ##todo  wieso gibt es hier ein los weight
 
             # Append all the data
             lidar_per_batch.append(lidar)
